@@ -14,6 +14,10 @@ exports.generateLabel = async (level, productId, productionDate) => {
     [productId]
   );
 
+ if (!product) {
+    throw new Error(`Product not found for productId=${productId}`);
+  }
+
   const timestamp = new Date().toISOString().replace(/[-T:.Z]/g, "").slice(0, 14);
 
   const [[seqRow]] = await db.query(
