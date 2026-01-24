@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SmartTrace Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="logo">🧬 SmartTrace</div>
+    <div class="subtitle">The Digital Red Thread of Fate</div>
+  </header>
+
+  <!-- MAIN DASHBOARD -->
+  <div class="container">
+
+    <!-- LEFT: GENERATION DASHBOARD -->
+    <div class="card">
+      <h2>📦 Label Generation Dashboard</h2>
+
+      <div class="field">
+        <label>Product Code</label>
+        <input id="productCode" placeholder="e.g. MED123" />
+      </div>
+
+      <div class="field">
+        <label>Quantity</label>
+        <input id="quantity" type="number" placeholder="e.g. 10000" />
+      </div>
+
+      <button class="primary" onclick="startGeneration()">🚀 Start Generation</button>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-title">Progress</div>
+          <div id="progressText" class="stat-value">Not started</div>
+        </div>
+        <div class="stat">
+          <div class="stat-title">Completion</div>
+          <div id="progressPercent" class="stat-value">0%</div>
+        </div>
+      </div>
+
+      <progress id="progressBar" value="0" max="100"></progress>
+    </div>
+
+    <!-- RIGHT: SCAN & VERIFY -->
+    <div class="card">
+      <h2>🔍 Scan & Verify</h2>
+
+      <div class="field">
+        <label>Serial Number</label>
+        <input id="serial" placeholder="Scan or enter serial" />
+      </div>
+
+      <div class="field">
+        <label>Verification Code</label>
+        <input id="verificationCode" placeholder="8-char code" />
+      </div>
+
+      <div class="field">
+        <label>Location</label>
+        <input id="location" placeholder="e.g. Patna" />
+      </div>
+
+      <button class="primary" onclick="verify()">🔎 Verify Item</button>
+
+      <div id="resultBox" class="result neutral">
+        Waiting for scan...
+      </div>
+
+      <div id="traceBox" class="timeline"></div>
+    </div>
+
+  </div>
+
+<script src="api.js"></script>
+</body>
+</html>
