@@ -3,7 +3,7 @@ const router = express.Router();
 const verificationController = require("../controllers/verificationController");
 
 // Verify a scanned label
-router.post("/verify", verificationController.verify);
+router.post("/", verificationController.verify);
 
 module.exports = router;
 
