@@ -1,81 +1,231 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="transition-colors duration-300">
 <head>
-  <meta charset="UTF-8" />
-  <title>SmartTrace Dashboard</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartTrace - Supply Chain Intelligence</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: { 850: '#1e293b' } 
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="font-inter text-slate-800 dark:text-slate-100 antialiased overflow-x-hidden transition-colors duration-300 bg-slate-50 dark:bg-slate-950">
 
-  <!-- TOP BAR -->
-  <header class="topbar">
-    <div class="logo">🧬 SmartTrace</div>
-    <div class="subtitle">The Digital Red Thread of Fate</div>
-  </header>
-
-  <!-- MAIN DASHBOARD -->
-  <div class="container">
-
-    <!-- LEFT: GENERATION DASHBOARD -->
-    <div class="card">
-      <h2>📦 Label Generation Dashboard</h2>
-
-      <div class="field">
-        <label>Product Code</label>
-        <input id="productCode" placeholder="e.g. MED123" />
-      </div>
-
-      <div class="field">
-        <label>Quantity</label>
-        <input id="quantity" type="number" placeholder="e.g. 10000" />
-      </div>
-
-      <button class="primary" onclick="startGeneration()">🚀 Start Generation</button>
-
-      <div class="stats">
-        <div class="stat">
-          <div class="stat-title">Progress</div>
-          <div id="progressText" class="stat-value">Not started</div>
-        </div>
-        <div class="stat">
-          <div class="stat-title">Completion</div>
-          <div id="progressPercent" class="stat-value">0%</div>
-        </div>
-      </div>
-
-      <progress id="progressBar" value="0" max="100"></progress>
+    <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+        <div class="absolute top-0 left-1/4 w-96 h-96 bg-blue-200 dark:bg-blue-900/20 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl opacity-30 animate-blob transition-colors duration-500"></div>
+        <div class="absolute top-0 right-1/4 w-96 h-96 bg-indigo-200 dark:bg-indigo-900/20 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl opacity-30 animate-blob animation-delay-2000 transition-colors duration-500"></div>
+        <div class="absolute -bottom-8 left-1/3 w-96 h-96 bg-purple-200 dark:bg-purple-900/20 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl opacity-30 animate-blob animation-delay-4000 transition-colors duration-500"></div>
     </div>
 
-    <!-- RIGHT: SCAN & VERIFY -->
-    <div class="card">
-      <h2>🔍 Scan & Verify</h2>
+    <button id="theme-toggle" 
+        class="fixed top-6 right-6 z-50 p-3 rounded-full shadow-xl transition-all duration-500 hover:scale-110 hover:rotate-12 focus:outline-none 
+        bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-indigo-500/50
+        dark:bg-yellow-400 dark:text-yellow-900 dark:hover:bg-yellow-300 dark:shadow-yellow-400/50 dark:ring-4 dark:ring-yellow-400/30">
+        
+        <i data-lucide="moon" class="w-6 h-6 dark:hidden fill-current"></i>
+        
+        <i data-lucide="sun" class="w-6 h-6 hidden dark:block fill-current"></i>
+    </button>
 
-      <div class="field">
-        <label>Serial Number</label>
-        <input id="serial" placeholder="Scan or enter serial" />
-      </div>
+    <div id="toast-container" class="fixed top-20 right-5 z-50 flex flex-col gap-2"></div>
 
-      <div class="field">
-        <label>Verification Code</label>
-        <input id="verificationCode" placeholder="8-char code" />
-      </div>
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        
+        <header class="mb-10 text-center relative z-10">
+            <div class="inline-flex items-center justify-center gap-3 mb-3 p-3 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm rounded-2xl border border-white/40 dark:border-slate-700/50 shadow-sm transition-all duration-300">
+                <div class="p-2 bg-indigo-600 rounded-xl text-white shadow-lg shadow-indigo-500/30">
+                    <i data-lucide="shield-check" class="w-8 h-8"></i>
+                </div>
+                <h1 class="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-700 to-purple-600 dark:from-indigo-400 dark:to-purple-400 tracking-tight">SmartTrace</h1>
+            </div>
+            <p class="text-slate-500 dark:text-slate-400 font-medium text-sm md:text-base max-w-lg mx-auto">
+                The Digital Red Thread of Fate. End-to-end supply chain serialization and anti-counterfeit protection.
+            </p>
+        </header>
 
-      <div class="field">
-        <label>Location</label>
-        <input id="location" placeholder="e.g. Patna" />
-      </div>
+        <div class="glass-card mb-8 p-6 md:p-8 rounded-3xl transition-all duration-300">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-sm font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Live Network Activity</h3>
+                <span class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-bold rounded-full flex items-center gap-1 border border-transparent dark:border-green-800">
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Online
+                </span>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div class="stat-card group">
+                    <div class="stat-icon bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                        <i data-lucide="package" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <div id="stat-primary" class="text-2xl font-bold text-slate-800 dark:text-white">0</div>
+                        <div class="text-xs font-medium text-slate-500 dark:text-slate-400">Primary Units</div>
+                    </div>
+                </div>
 
-      <button class="primary" onclick="verify()">🔎 Verify Item</button>
+                <div class="stat-card group">
+                    <div class="stat-icon bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                        <i data-lucide="layers" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <div id="stat-secondary" class="text-2xl font-bold text-slate-800 dark:text-white">0</div>
+                        <div class="text-xs font-medium text-slate-500 dark:text-slate-400">Cartons</div>
+                    </div>
+                </div>
 
-      <div id="resultBox" class="result neutral">
-        Waiting for scan...
-      </div>
+                <div class="stat-card group">
+                    <div class="stat-icon bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                        <i data-lucide="container" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <div id="stat-tertiary" class="text-2xl font-bold text-slate-800 dark:text-white">0</div>
+                        <div class="text-xs font-medium text-slate-500 dark:text-slate-400">Pallets</div>
+                    </div>
+                </div>
 
-      <div id="traceBox" class="timeline"></div>
+                <div class="stat-card group">
+                    <div class="stat-icon bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 group-hover:bg-amber-600 group-hover:text-white transition-colors">
+                        <i data-lucide="scan-line" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <div id="stat-scans" class="text-2xl font-bold text-slate-800 dark:text-white">0</div>
+                        <div class="text-xs font-medium text-slate-500 dark:text-slate-400">Total Scans</div>
+                    </div>
+                </div>
+
+                <div class="stat-card group">
+                    <div class="stat-icon bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 group-hover:bg-rose-600 group-hover:text-white transition-colors">
+                        <i data-lucide="alert-octagon" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <div id="stat-suspect" class="text-2xl font-bold text-slate-800 dark:text-white">0</div>
+                        <div class="text-xs font-medium text-slate-500 dark:text-slate-400">Suspect</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex p-1 mb-8 bg-slate-200/50 dark:bg-slate-800/50 backdrop-blur-md rounded-2xl max-w-md mx-auto border border-white/20 dark:border-slate-700/50">
+            <button id="tab-btn-generate" class="tab-btn active">
+                <i data-lucide="printer" class="w-4 h-4"></i> Generate
+            </button>
+            <button id="tab-btn-verify" class="tab-btn">
+                <i data-lucide="scan" class="w-4 h-4"></i> Scan & Verify
+            </button>
+        </div>
+
+        <div id="view-generate" class="view-section animate-fade-in">
+            <div class="glass-card rounded-3xl overflow-hidden">
+                <div class="p-8 border-b border-slate-100 dark:border-slate-700/50">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-800 dark:text-white">Batch Label Generation</h2>
+                        </div>
+                        <div class="flex items-center gap-3 bg-slate-50 dark:bg-slate-800/50 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700">
+                            <input type="number" id="batch-size-input" value="100" min="1" max="50000"
+                                class="w-24 px-3 py-2 bg-white dark:bg-slate-700 rounded-lg text-sm font-semibold text-center outline-none focus:ring-2 focus:ring-indigo-500 text-slate-800 dark:text-white transition-colors">
+                            <button id="btn-generate-batch" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg shadow-lg shadow-indigo-500/30 transition-all flex items-center gap-2">
+                                <span>Generate</span>
+                                <i data-lucide="zap" class="w-4 h-4 fill-current"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="generation-output" class="hidden bg-slate-50/50 dark:bg-slate-900/50 p-8 transition-colors">
+                    <div class="flex items-center gap-4 mb-6 p-4 bg-emerald-50/80 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800 rounded-2xl text-emerald-800 dark:text-emerald-400">
+                        <div class="p-2 bg-emerald-100 dark:bg-emerald-900/50 rounded-full">
+                            <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600 dark:text-emerald-400"></i>
+                        </div>
+                        <div>
+                            <div id="gen-msg-count" class="font-bold"></div>
+                            <div id="gen-msg-perf" class="text-xs font-medium opacity-80 mt-0.5 font-mono"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden transition-colors">
+                        <div class="overflow-x-auto max-h-[400px] custom-scrollbar">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-slate-50 dark:bg-slate-900/80 text-slate-500 dark:text-slate-400 font-semibold border-b border-slate-200 dark:border-slate-700 sticky top-0 backdrop-blur-md">
+                                    <tr>
+                                        <th class="px-6 py-4">Level</th>
+                                        <th class="px-6 py-4">Serial Number</th>
+                                        <th class="px-6 py-4">Security Hash (First 8)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="batch-table-body" class="divide-y divide-slate-100 dark:divide-slate-700 text-slate-600 dark:text-slate-300">
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-verify" class="view-section hidden animate-fade-in">
+            <div class="grid lg:grid-cols-2 gap-8">
+                <div class="glass-card p-8 rounded-3xl h-fit">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg text-indigo-600 dark:text-indigo-400">
+                            <i data-lucide="scan-barcode" class="w-6 h-6"></i>
+                        </div>
+                        <h2 class="text-xl font-bold text-slate-800 dark:text-white">Scan Product</h2>
+                    </div>
+                    
+                    <div class="space-y-5">
+                        <div class="group">
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 ml-1">Serial Number</label>
+                            <div class="relative transition-all duration-300 focus-within:scale-[1.02]">
+                                <i data-lucide="barcode" class="absolute left-4 top-3.5 w-5 h-5 text-slate-400"></i>
+                                <input type="text" id="scan-serial-input" placeholder="Scan or enter serial..."
+                                    class="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-indigo-500 outline-none font-mono text-slate-700 dark:text-slate-200 transition-all shadow-sm">
+                            </div>
+                        </div>
+
+                        <div class="group">
+                            <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 ml-1">Location</label>
+                            <div class="relative transition-all duration-300 focus-within:scale-[1.02]">
+                                <i data-lucide="map-pin" class="absolute left-4 top-3.5 w-5 h-5 text-slate-400"></i>
+                                <input type="text" id="scan-location-input" placeholder="e.g. Warehouse B"
+                                    class="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:bg-white dark:focus:bg-slate-800 focus:ring-2 focus:ring-indigo-500 outline-none text-slate-700 dark:text-slate-200 transition-all shadow-sm">
+                            </div>
+                        </div>
+
+                        <button id="btn-scan-verify" class="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/40 transform transition hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-2">
+                            <span>Verify Authenticity</span>
+                            <i data-lucide="shield-check" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="scan-result-container">
+                    <div class="h-full min-h-[400px] flex flex-col items-center justify-center p-8 text-center text-slate-400 dark:text-slate-500 bg-white/40 dark:bg-slate-800/40 backdrop-blur-md rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-700 transition-colors">
+                        <div class="p-6 bg-slate-50 dark:bg-slate-800 rounded-full mb-4 animate-pulse">
+                            <i data-lucide="search" class="w-10 h-10 opacity-50"></i>
+                        </div>
+                        <p class="font-medium">Waiting for scan input...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-  </div>
-
-<script src="api.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

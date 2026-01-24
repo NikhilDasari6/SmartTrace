@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 
 const labelRoutes = require("./routes/labelRoutes");
 const hierarchyRoutes = require("./routes/hierarchyRoutes");
@@ -7,6 +8,13 @@ const productRoutes = require("./routes/productRoutes");
 const bulkRoutes = require("./routes/bulkRoutes");
 
 const app = express();
+
+/* ---------- CORS (MUST be first) ---------- */
+app.use(cors({
+  origin: "*",
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type"]
+}));
 
 /* ---------- Middleware ---------- */
 app.use(express.json());
@@ -18,15 +26,9 @@ app.use("/api/verify", verificationRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/bulk", bulkRoutes);
 
-/* ---------- Health Check ---------- */
+/* ---------- Health ---------- */
 app.get("/health", (req, res) => {
-  res.status(200).json({ status: "SmartTrace backend running" });
-});
-
-/* ---------- Global Error Handler ---------- */
-app.use((err, req, res, next) => {
-  console.error("Unhandled Error:", err);
-  res.status(500).json({ error: "Internal Server Error" });
+  res.json({ status: "SmartTrace backend running" });
 });
 
 module.exports = app;
