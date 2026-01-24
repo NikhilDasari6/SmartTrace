@@ -1,9 +1,7 @@
-const crypto = require("crypto");
+// HASHING PLACEHOLDER
+// Will implement SHA-256 later
 
-exports.generateHash = (serial, date, productCode) => {
-  const secretSalt = "SMARTTRACE_SECRET";
-  return crypto
-    .createHash("sha256")
-    .update(serial + date + productCode + secretSalt)
-    .digest("hex");
+exports.generateHash = () => {
+  return "HASH_PLACEHOLDER";
 };
+

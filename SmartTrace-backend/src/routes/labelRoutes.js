@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 const labelController = require("../controllers/labelController");
 
-router.post("/generate", labelController.generateLabel);
-router.post("/verify", labelController.verifyLabel);
+// Serial generation only
+router.post("/generate", labelController.generateSerial);
 
 module.exports = router;
+

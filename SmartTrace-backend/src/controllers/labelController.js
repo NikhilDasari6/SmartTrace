@@ -1,18 +1,11 @@
 const labelService = require("../services/labelService");
 
-exports.generateLabel = async (req, res) => {
-  try {
-    const label = await labelService.generate(req.body);
-    res.status(201).json(label);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
+exports.generateSerial = (req, res) => {
+  const { level } = req.body;
 
-exports.verifyLabel = async (req, res) => {
   try {
-    const result = await labelService.verify(req.body);
-    res.json(result);
+    const serial = labelService.generateSerial(level);
+    res.status(200).json({ serial });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
