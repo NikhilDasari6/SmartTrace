@@ -1,40 +1,27 @@
-// In-memory hierarchy (DB later)
-const hierarchyMap = new Map();
+const db = require("../config/db");
 
-// Configurable aggregation rules
-const rules = {
-  PRIMARY: { parent: "SECONDARY", max: 10 },
-  SECONDARY: { parent: "TERTIARY", max: 50 }
-};
+exports.aggregate = async (childSerial, parentSerial) => {
+  const [[child]] = await db.query(
+    "SELECT label_id, packaging_level FROM labels WHERE serial_number=?",
+    [childSerial]
+  );
+  const [[parent]] = await db.query(
+    "SELECT label_id, packaging_level FROM labels WHERE serial_number=?",
+    [parentSerial]
+  );
 
-exports.linkChildToParent = (child, childLevel, parent, parentLevel) => {
-  if (rules[childLevel]?.parent !== parentLevel) {
-    throw new Error("Invalid hierarchy mapping");
+  if (!child || !parent) throw new Error("Invalid serial");
+
+  if (
+    (child.packaging_level === "PRIMARY" && parent.packaging_level !== "SECONDARY") ||
+    (child.packaging_level === "SECONDARY" && parent.packaging_level !== "TERTIARY")
+  ) {
+    throw new Error("Invalid hierarchy");
   }
 
-  if (hierarchyMap.has(child)) {
-    throw new Error("Child already linked to a parent");
-  }
-
-  const count = [...hierarchyMap.values()].filter(p => p === parent).length;
-  if (count >= rules[childLevel].max) {
-    throw new Error("Parent capacity exceeded");
-  }
-
-  hierarchyMap.set(child, parent);
-  return { child, parent };
-};
-
-exports.getHierarchyPath = (serial) => {
-  const path = [];
-  let current = serial;
-
-  while (hierarchyMap.has(current)) {
-    const parent = hierarchyMap.get(current);
-    path.push({ child: current, parent });
-    current = parent;
-  }
-
-  return path;
+  await db.query(
+    "INSERT INTO aggregation (parent_label_id, child_label_id) VALUES (?,?)",
+    [parent.label_id, child.label_id]
+  );
 };
 

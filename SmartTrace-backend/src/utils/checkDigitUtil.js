@@ -1,6 +1,5 @@
-// GS1 Mod-10 / Luhn-compatible
-exports.generateCheckDigit = (input) => {
-  const digits = input.replace(/\D/g, "").split("").reverse();
+exports.calculateCheckDigit = (payload) => {
+  const digits = payload.replace(/\D/g, "").split("").reverse();
   let sum = 0;
 
   for (let i = 0; i < digits.length; i++) {
@@ -8,7 +7,6 @@ exports.generateCheckDigit = (input) => {
     if (i % 2 === 0) n *= 3;
     sum += n;
   }
-
   return (10 - (sum % 10)) % 10;
 };
 

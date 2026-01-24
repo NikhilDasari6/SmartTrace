@@ -2,10 +2,10 @@ const express = require("express");
 const router = express.Router();
 const hierarchyController = require("../controllers/hierarchyController");
 
-// Create parent–child link
+// Aggregate child → parent
 router.post("/aggregate", hierarchyController.aggregate);
 
-// Trace full hierarchy path
+// Trace Red Thread
 router.get("/trace/:serial", hierarchyController.trace);
 
 module.exports = router;

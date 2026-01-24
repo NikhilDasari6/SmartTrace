@@ -1,7 +1,14 @@
-// HASHING PLACEHOLDER
-// Will implement SHA-256 later
+const crypto = require("crypto");
 
-exports.generateHash = () => {
-  return "HASH_PLACEHOLDER";
+exports.generateHashes = (serial, date, productCode, salt) => {
+  const full = crypto
+    .createHash("sha256")
+    .update(serial + date + productCode + salt)
+    .digest("hex");
+
+  return {
+    fullHash: full,
+    shortHash: full.substring(0, 8)
+  };
 };
 

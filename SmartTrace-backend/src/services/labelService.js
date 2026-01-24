@@ -1,84 +1,45 @@
-const { generateCheckDigit } = require("../utils/checkDigitUtil");
+const db = require("../config/db");
+const { calculateCheckDigit } = require("../utils/checkDigitUtil");
+const { generateHashes } = require("../utils/hashUtil");
 
-// TEMP counters (DB sequences later)
-let primaryCounter = 0;
-let secondaryCounter = 0;
-let ssccCounter = 0;
+exports.generateLabel = async (level, productId, productionDate) => {
+  const prefixMap = {
+    PRIMARY: "PRD1",
+    SECONDARY: "CRT",
+    TERTIARY: "SSCC"
+  };
 
-exports.generateSerial = (level) => {
-  switch (level) {
-    case "PRIMARY":
-      return generatePrimarySerial();
-    case "SECONDARY":
-      return generateSecondarySerial();
-    case "TERTIARY":
-      return generateSSCC();
-    default:
-      throw new Error("Invalid level");
-  }
+  const [[product]] = await db.query(
+    "SELECT product_code FROM products WHERE product_id=?",
+    [productId]
+  );
+
+  const timestamp = new Date().toISOString().replace(/[-T:.Z]/g, "").slice(0, 14);
+
+  const [[seqRow]] = await db.query(
+    "SELECT COALESCE(MAX(label_id),0)+1 AS seq FROM labels"
+  );
+
+  const raw = prefixMap[level] + timestamp + String(seqRow.seq).padStart(6, "0");
+  const cd = calculateCheckDigit(raw);
+  const serial = raw + cd;
+
+  const { fullHash, shortHash } = generateHashes(
+    serial,
+    productionDate,
+    product.product_code,
+    "SECRET_SALT_V1"
+  );
+
+  await db.query(
+    `INSERT INTO labels
+     (serial_number, packaging_level, product_id, production_date,
+      full_hash, short_hash)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    [serial, level, productId, productionDate, fullHash, shortHash]
+  );
+
+  return serial;
 };
 
-/* ========= PRIMARY =========
-   Prefix + Time + Seq + CD
-   Fixed length: 25
-*/
-function generatePrimarySerial() {
-  const prefix = "PRD1";
-  const timestamp = new Date()
-    .toISOString()
-    .replace(/[-T:.Z]/g, "")
-    .slice(0, 14);
-
-  primaryCounter++;
-  const seq = String(primaryCounter).padStart(6, "0");
-
-  const raw = prefix + timestamp + seq;
-  const cd = generateCheckDigit(raw);
-
-  return raw + cd;
-}
-
-/* ========= SECONDARY =========
-   Hybrid Secure Serial
-   Fixed length: 20
-*/
-function generateSecondarySerial() {
-  const prefix = "CRT";
-  const date = new Date().toISOString().slice(0, 10).replace(/-/g, "");
-
-  secondaryCounter++;
-  const seq = String(secondaryCounter).padStart(4, "0");
-  const random = generateRandom(4);
-
-  const raw = prefix + date + seq + random;
-  const cd = generateCheckDigit(raw);
-
-  return raw + cd;
-}
-
-/* ========= TERTIARY =========
-   SSCC – 18 digits
-*/
-function generateSSCC() {
-  const extensionDigit = "3";
-  const companyPrefix = "8901234";
-
-  ssccCounter++;
-  const serialRef = String(ssccCounter)
-    .padStart(17 - companyPrefix.length - 1, "0");
-
-  const raw = extensionDigit + companyPrefix + serialRef;
-  const cd = generateCheckDigit(raw);
-
-  return raw + cd;
-}
-
-function generateRandom(len) {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  let out = "";
-  for (let i = 0; i < len; i++) {
-    out += chars[Math.floor(Math.random() * chars.length)];
-  }
-  return out;
-}
 
