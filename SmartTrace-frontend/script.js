@@ -1,4 +1,8 @@
-const API_BASE = "http://127.0.0.1:3000/api";
+// In production, replace this with your actual backend URL (e.g., https://smarttrace-api.onrender.com/api)
+const API_BASE = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+  ? "http://127.0.0.1:3000/api"
+  : "/api"; // Assumes a reverse proxy or same-domain deployment
+
 
 /* =========================================================
    INIT ICONS (MANDATORY)
