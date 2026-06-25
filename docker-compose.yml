@@ -1,9 +1,10 @@
 version: '3.8'
 
 services:
-  backend:
+  smarttrace-backend:
     build: ./SmartTrace-backend
     container_name: smarttrace-backend
+
     ports:
       - "3000:3000"
     env_file:
@@ -16,5 +17,6 @@ services:
     ports:
       - "8080:80"
     depends_on:
-      - backend
+      - smarttrace-backend
+
     restart: always

@@ -26,10 +26,19 @@ app.use("/api/verify", verificationRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/bulk", bulkRoutes);
 
-/* ---------- Health ---------- */
+/* ---------- Health & Root ---------- */
+app.get("/", (req, res) => {
+  res.json({ 
+    message: "SmartTrace API is running",
+    documentation: "Use /api/labels, /api/verify, etc.",
+    frontend: "Visit port 8080 for the UI"
+  });
+});
+
 app.get("/health", (req, res) => {
   res.json({ status: "SmartTrace backend running" });
 });
+
 
 module.exports = app;
 
