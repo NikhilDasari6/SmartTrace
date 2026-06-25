@@ -1,4 +1,11 @@
-const API_BASE = "/api";
+// --- CONFIGURATION ---
+// 1. Locally, this uses http://localhost:3000/api
+// 2. In production, REPLACE the URL below with your actual Render backend URL
+const API_BASE = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+  ? "http://127.0.0.1:3000/api"
+  : "https://smarttrace-backend.onrender.com/api"; // <-- REPLACE THIS WITH YOUR BACKEND URL
+// ---------------------
+
 
 
 
