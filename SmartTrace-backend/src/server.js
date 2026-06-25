@@ -1,7 +1,7 @@
 const app = require("./app");
 const { bootstrapTestProduct } = require("./utils/bootstrapTestData");
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 (async () => {
   try {
