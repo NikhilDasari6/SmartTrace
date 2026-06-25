@@ -8,15 +8,9 @@ server {
         try_files $uri $uri/ /index.html;
     }
 
-    # Resolver for Docker/Render internal networking
-    resolver 127.0.0.11 valid=30s;
-
-    # Proxy API requests to the backend container (Matches Render service name)
+    # Proxy API requests to the backend (URL injected via environment variable)
     location /api/ {
-        set $backend_url http://smarttrace-backend:3000;
-        proxy_pass $backend_url/api/;
-
-
+        proxy_pass ${BACKEND_URL}/api/;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';

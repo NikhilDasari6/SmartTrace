@@ -31,5 +31,9 @@ services:
     repo: https://github.com/NikhilDasari6/SmartTrace
     rootDir: SmartTrace-frontend
     plan: free
-    # If the frontend needs to talk to the backend on a different domain,
-    # you might need to hardcode the URL in script.js or use a rewrite rule.
+    envVars:
+      - key: BACKEND_URL
+        value: http://smarttrace-backend:3000
+    depends_on:
+      - smarttrace-backend
+
