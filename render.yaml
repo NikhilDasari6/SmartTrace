@@ -21,7 +21,6 @@ services:
         value: "true"
       - key: PORT
         value: "3000"
-
   - type: web
     name: smarttrace-frontend
     runtime: docker
@@ -31,7 +30,6 @@ services:
     plan: free
     envVars:
       - key: BACKEND_URL
-        value: http://smarttrace-backend:3000
+        value: "http://smarttrace-backend:3000"
     depends_on:
       - smarttrace-backend
-
