@@ -8,10 +8,8 @@ async function migrate() {
     const sqlPath = path.join(__dirname, "src", "smarttrace_schema.sql");
     let sql = fs.readFileSync(sqlPath, "utf8");
 
-    // Remove single line comments
     sql = sql.replace(/--.*$/gm, "");
 
-    // Split by ;
     const statements = sql
       .split(";")
       .map(s => s.trim())
@@ -32,7 +30,6 @@ async function migrate() {
 
     console.log("Migration completed successfully!");
     
-    // Double check tables
     const [tables] = await db.query("SHOW TABLES");
     console.log("Tables now present:", tables.map(t => Object.values(t)[0]));
     

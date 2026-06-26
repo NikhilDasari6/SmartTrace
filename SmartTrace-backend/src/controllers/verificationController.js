@@ -1,13 +1,9 @@
 const db = require("../config/db");
 
-/**
- * Verify a scanned label
- */
 exports.verify = async (req, res) => {
   try {
     const { serial_number, scan_location, latitude, longitude } = req.body;
 
-    /* ---------- 1. Input validation ---------- */
     if (!serial_number || typeof serial_number !== "string") {
       return res.status(400).json({
         error: "Invalid input: serial_number is required"
@@ -20,7 +16,6 @@ exports.verify = async (req, res) => {
       });
     }
 
-    /* ---------- 2. Fetch label ---------- */
     const [[label]] = await db.query(
       `SELECT label_id, serial_number, product_id, status
        FROM labels
@@ -34,7 +29,6 @@ exports.verify = async (req, res) => {
       });
     }
 
-    /* ---------- 3. Decommission check ---------- */
     if (label.status === "DECOMMISSIONED") {
       await db.query(
         `INSERT INTO verification_logs
@@ -49,7 +43,6 @@ exports.verify = async (req, res) => {
       });
     }
 
-    /* ---------- 4. Log verification ---------- */
     await db.query(
       `INSERT INTO verification_logs
        (label_id, scan_latitude, scan_longitude, scan_result, reason)
@@ -63,7 +56,6 @@ exports.verify = async (req, res) => {
       ]
     );
 
-    /* ---------- 5. Success response ---------- */
     return res.json({
       status: "VALID",
       serial_number: label.serial_number,

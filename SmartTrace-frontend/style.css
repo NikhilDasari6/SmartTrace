@@ -1,9 +1,7 @@
-/* Base Styles */
 .font-inter {
     font-family: 'Inter', sans-serif;
 }
 
-/* Glassmorphism Utilities - Adaptive for Dark Mode */
 .glass-card {
     background: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(12px);
@@ -13,14 +11,12 @@
     transition: background 0.3s, border-color 0.3s;
 }
 
-/* Dark Mode Glass Override */
 .dark .glass-card {
     background: rgba(30, 41, 59, 0.7); /* Slate-800 */
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
 }
 
-/* Stat Cards */
 .stat-card {
     background: white;
     padding: 1rem;
@@ -59,7 +55,6 @@
     transition: all 0.3s ease;
 }
 
-/* Tab Buttons */
 .tab-btn {
     flex: 1;
     padding: 0.75rem 1.5rem;
@@ -99,7 +94,6 @@
     color: #e2e8f0;
 }
 
-/* Background Animation (Blobs) */
 @keyframes blob {
     0% { transform: translate(0px, 0px) scale(1); }
     33% { transform: translate(30px, -50px) scale(1.1); }
@@ -119,7 +113,6 @@
     animation-delay: 4s;
 }
 
-/* Fade In Utility */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -129,7 +122,6 @@
     animation: fadeIn 0.4s ease-out forwards;
 }
 
-/* Custom Scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -152,7 +144,6 @@
     display: none !important;
 }
 
-/* Toast Animation */
 @keyframes slideIn {
     from { transform: translateX(100%); opacity: 0; }
     to { transform: translateX(0); opacity: 1; }

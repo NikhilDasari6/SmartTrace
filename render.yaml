@@ -1,10 +1,9 @@
 services:
-  # Backend Service
   - type: web
     name: smarttrace-backend
     runtime: docker
     env: docker
-    repo: https://github.com/NikhilDasari6/SmartTrace # Update with your username if different
+    repo: https://github.com/NikhilDasari6/SmartTrace
     rootDir: SmartTrace-backend
     plan: free
     envVars:
@@ -23,7 +22,6 @@ services:
       - key: PORT
         value: "3000"
 
-  # Frontend Service
   - type: web
     name: smarttrace-frontend
     runtime: docker

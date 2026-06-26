@@ -2,7 +2,6 @@ const db = require("../config/db");
 const { calculateCheckDigit } = require("../utils/checkDigitUtil");
 const { generateHashes } = require("../utils/hashUtil");
 
-/* ---------- DB-backed sequence allocator ---------- */
 async function getNextSequence(count) {
   const values = Array.from({ length: count }, () => []);
   const [result] = await db.query(
@@ -14,13 +13,11 @@ async function getNextSequence(count) {
   return Array.from({ length: count }, (_, i) => start + i);
 }
 
-/* ---------- Collision-proof serial builder ---------- */
 function buildSerial(prefix, seq) {
   const raw = prefix + String(seq).padStart(12, "0");
   return raw + calculateCheckDigit(raw);
 }
 
-/* ---------- Main bulk generator ---------- */
 exports.generate = async (productId, totalUnits) => {
   if (totalUnits % 10 !== 0) {
     throw new Error("Units must be multiple of 10");
@@ -29,7 +26,6 @@ exports.generate = async (productId, totalUnits) => {
   const productionDate = new Date().toISOString().slice(0, 10);
   const cartonsNeeded = totalUnits / 10;
 
-  /* ---------- Fetch product ---------- */
   const [[product]] = await db.query(
     "SELECT product_code FROM products WHERE product_id=?",
     [productId]
@@ -37,7 +33,6 @@ exports.generate = async (productId, totalUnits) => {
 
   if (!product) throw new Error("Product not found");
 
-  /* ---------- Allocate sequences ---------- */
   const totalSerials = 1 + cartonsNeeded + totalUnits;
   const sequences = await getNextSequence(totalSerials);
   let idx = 0;
@@ -45,11 +40,9 @@ exports.generate = async (productId, totalUnits) => {
   const labels = [];
   const aggregations = [];
 
-  /* ---------- Pallet ---------- */
   const palletSerial = buildSerial("SSCC", sequences[idx++]);
   labels.push(palletSerial);
 
-  /* ---------- Cartons ---------- */
   const cartonSerials = [];
   for (let i = 0; i < cartonsNeeded; i++) {
     const serial = buildSerial("CRT", sequences[idx++]);
@@ -57,7 +50,6 @@ exports.generate = async (productId, totalUnits) => {
     labels.push(serial);
   }
 
-  /* ---------- Units ---------- */
   const unitSerials = [];
   for (let i = 0; i < totalUnits; i++) {
     const serial = buildSerial("PRD1", sequences[idx++]);
@@ -65,7 +57,6 @@ exports.generate = async (productId, totalUnits) => {
     labels.push(serial);
   }
 
-  /* ---------- Bulk insert labels ---------- */
   const labelValues = labels.map(serial => {
     const { fullHash, shortHash } = generateHashes(
       serial,
@@ -95,7 +86,6 @@ exports.generate = async (productId, totalUnits) => {
     [labelValues]
   );
 
-  /* ---------- Fetch inserted IDs ---------- */
   const [rows] = await db.query(
     `SELECT label_id, serial_number FROM labels
      WHERE serial_number IN (?)`,
@@ -107,7 +97,6 @@ exports.generate = async (productId, totalUnits) => {
     idMap[r.serial_number] = r.label_id;
   });
 
-  /* ---------- Build aggregation ---------- */
   cartonSerials.forEach(carton => {
     aggregations.push([idMap[palletSerial], idMap[carton]]);
   });
@@ -119,7 +108,6 @@ exports.generate = async (productId, totalUnits) => {
     }
   }
 
-  /* ---------- Bulk insert aggregation ---------- */
   await db.query(
     `INSERT INTO aggregation (parent_label_id, child_label_id)
      VALUES ?`,

@@ -1,29 +1,16 @@
-// --- CONFIGURATION ---
-// 1. Locally, this uses http://localhost:3000/api
-// 2. In production, REPLACE the URL below with your actual Render backend URL
 const API_BASE = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
   ? "http://127.0.0.1:3000/api"
-  : "https://smarttrace-backend.onrender.com/api"; // <-- REPLACE THIS WITH YOUR BACKEND URL
-// ---------------------
+  : "https://smarttrace-backend.onrender.com/api";
 
 
 
 
-/* =========================================================
-   INIT ICONS (MANDATORY)
-   ========================================================= */
 lucide.createIcons();
 
-/* =========================================================
-   THEME TOGGLE
-   ========================================================= */
 document.getElementById("theme-toggle").addEventListener("click", () => {
   document.documentElement.classList.toggle("dark");
 });
 
-/* =========================================================
-   TOAST
-   ========================================================= */
 function showToast(message, type = "info") {
   const container = document.getElementById("toast-container");
   const toast = document.createElement("div");
@@ -36,9 +23,6 @@ function showToast(message, type = "info") {
   setTimeout(() => toast.remove(), 3000);
 }
 
-/* =========================================================
-   SAFE JSON PARSER
-   ========================================================= */
 function parseJsonSafely(text) {
   try {
     return JSON.parse(text);
@@ -47,9 +31,6 @@ function parseJsonSafely(text) {
   }
 }
 
-/* =========================================================
-   TAB SWITCHING (THIS FIXES YOUR ISSUE)
-   ========================================================= */
 const tabGenerate = document.getElementById("tab-btn-generate");
 const tabVerify = document.getElementById("tab-btn-verify");
 const viewGenerate = document.getElementById("view-generate");
@@ -65,13 +46,10 @@ tabGenerate.addEventListener("click", () => {
 tabVerify.addEventListener("click", () => {
   tabVerify.classList.add("active");
   tabGenerate.classList.remove("active");
-  viewVerify.classList.remove("hidden");   // ← THIS WAS MISSING
+  viewVerify.classList.remove("hidden");
   viewGenerate.classList.add("hidden");
 });
 
-/* =========================================================
-   BULK GENERATION
-   ========================================================= */
 document.getElementById("btn-generate-batch").addEventListener("click", async () => {
   const units = parseInt(document.getElementById("batch-size-input").value);
   if (!units || units <= 0) {
@@ -106,9 +84,6 @@ document.getElementById("btn-generate-batch").addEventListener("click", async ()
   }
 });
 
-/* =========================================================
-   SCAN & VERIFY (NOW CLICKABLE)
-   ========================================================= */
 document.getElementById("btn-scan-verify").addEventListener("click", async () => {
   const serial = document.getElementById("scan-serial-input").value.trim();
   const location = document.getElementById("scan-location-input").value.trim();

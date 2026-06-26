@@ -9,24 +9,20 @@ const bulkRoutes = require("./routes/bulkRoutes");
 
 const app = express();
 
-/* ---------- CORS (MUST be first) ---------- */
 app.use(cors({
   origin: "*",
   methods: ["GET", "POST", "OPTIONS"],
   allowedHeaders: ["Content-Type"]
 }));
 
-/* ---------- Middleware ---------- */
 app.use(express.json());
 
-/* ---------- Routes ---------- */
 app.use("/api/labels", labelRoutes);
 app.use("/api/hierarchy", hierarchyRoutes);
 app.use("/api/verify", verificationRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/bulk", bulkRoutes);
 
-/* ---------- Health & Root ---------- */
 app.get("/", (req, res) => {
   res.json({ 
     message: "SmartTrace API is running",
